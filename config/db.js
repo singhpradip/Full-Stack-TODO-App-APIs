@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 
-const DB_URL = process.env.MONGO_DB_URL;
-// const DB_URL = process.env.MONGO_DB_REMOTE_URL;
+// const DB_URL = process.env.MONGO_DB_URL;
+const DB_URL = process.env.MONGO_DB_REMOTE_URL;
 
 const connectDB = async () => {
   try {
