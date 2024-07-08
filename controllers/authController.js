@@ -9,17 +9,32 @@ const generateOTP = () => {
   const otp = Math.floor(100000 + Math.random() * 900000);
   return otp.toString();
 };
-const generateTempToken = (email) => {
-  return jwt.sign({ email: email }, secretKey, {
+const generateTempToken = (email, name) => {
+  return jwt.sign({ email: email, name: name }, secretKey, {
     expiresIn: OTPexpiresIn,
   });
+};
+const sendOtp = async (email, name = null) => {
+  try {
+    const otp = generateOTP();
+    await sendVerificationEmail(email, otp, name);
+
+    const tempToken = generateTempToken(email, name);
+    // console.log({ OTP: otp, Token: tempToken });
+    // console.log("OTP sent successfully to:", email);
+    return { tempToken, otp };
+  } catch (error) {
+    console.error("Error sending OTP:", error);
+    throw error;
+  }
 };
 
 const generateToken = (user) => {
   return jwt.sign(
     {
       userId: user._id,
-      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: user.email,
       profilePicture: user.profilePicture,
       darkMode: user.darkMode,
@@ -30,23 +45,7 @@ const generateToken = (user) => {
   );
 };
 
-const sendOtp = async (email, name = null) => {
-  try {
-    const otp = generateOTP();
-    await sendVerificationEmail(email, otp, name);
-
-    const tempToken = generateTempToken(email);
-    // console.log({ OTP: otp, Token: tempToken });
-    // console.log("OTP sent successfully to:", email);
-    return { tempToken, otp };
-  } catch (error) {
-    console.error("Error sending OTP:", error);
-    throw error;
-  }
-};
-
 const register = async (req, res) => {
-  console.log("register is called");
   const { firstName, lastName, email, password, confirmPassword } = req.body;
 
   if (!firstName || !lastName || !email || !password || !confirmPassword) {
@@ -96,6 +95,33 @@ const register = async (req, res) => {
   }
 };
 
+const resendRegistrationOtp = async (req, res) => {
+  try {
+    const { email, name } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      return sendError(res, "User not found", 404);
+    }
+    if (user.isVerified) {
+      return sendError(res, "Your account is already verified", 400);
+    }
+
+    const { tempToken, otp } = await sendOtp(email, name);
+
+    user.otp = otp;
+    await user.save();
+
+    res.cookie("tempToken", tempToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    return successResponse(res, "OTP Resent Successfully");
+  } catch (error) {
+    return sendError(res, error.message, 400);
+  }
+};
+
 const login = async (req, res) => {};
 
-module.exports = { register, login };
+module.exports = { register, login, resendRegistrationOtp };
