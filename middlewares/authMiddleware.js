@@ -12,17 +12,28 @@ const verifyTempToken = async (req, res, next) => {
   }
   try {
     const decoded = jwt.verify(token, secretKey);
-    console.log(decoded);
     const { email, name } = decoded;
-    // console.log("Email:" + email);
     const user = await User.findOne({ email });
     // console.log(user);
     if (!user) {
       return sendError(res, "Not the correct Token !", 404);
     }
+
+    // const user = {
+    //   firstName: isUser.firstName,
+    //   lastName: isUser.lastName,
+    //   email: isUser.email,
+    //   _id: isUser._id,
+    //   isDarkMode: isUser.isDarkMode,
+    //   profilePicture: isUser.profilePicture,
+    //   isVerified: isUser.isVerified,
+    //   passwordVersion: isUser.passwordVersion,
+    // };
+
     req.body.email = email;
     req.body.name = name;
-    console.log("Token: PASS");
+    req.body.user = user;
+    // console.log("Token: PASS");
     next();
   } catch (error) {
     console.log("Invalid token, ERROR:\n ", error);

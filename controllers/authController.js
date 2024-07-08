@@ -2,7 +2,12 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userSchema");
 const { successResponse, sendError } = require("../utils/responseUtils");
-const { secretKey, expiresIn, OTPexpiresIn } = require("../config/config");
+const {
+  secretKey,
+  expiresIn,
+  OTPexpiresIn,
+  nodeEnvironment,
+} = require("../config/config");
 const { sendVerificationEmail } = require("../utils/sendVerificationEmail");
 
 const generateOTP = () => {
@@ -32,13 +37,13 @@ const sendOtp = async (email, name = null) => {
 const generateToken = (user) => {
   return jwt.sign(
     {
-      userId: user._id,
+      useId: user._id,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
       profilePicture: user.profilePicture,
-      darkMode: user.darkMode,
-      tokenVersion: user.tokenVersion,
+      isDarkMode: user.isDarkMode,
+      isVerified: user.isVerified,
     },
     secretKey,
     { expiresIn }
@@ -82,7 +87,7 @@ const register = async (req, res) => {
     }
     res.cookie("tempToken", tempToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: nodeEnvironment === "production",
     });
 
     return successResponse(
@@ -98,7 +103,8 @@ const register = async (req, res) => {
 const resendRegistrationOtp = async (req, res) => {
   try {
     const { email, name } = req.body;
-    const user = await User.findOne({ email });
+    const { user } = req.body;
+
     if (!user) {
       return sendError(res, "User not found", 404);
     }
@@ -113,7 +119,7 @@ const resendRegistrationOtp = async (req, res) => {
 
     res.cookie("tempToken", tempToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
+      secure: nodeEnvironment === "production",
     });
 
     return successResponse(res, "OTP Resent Successfully");
@@ -122,6 +128,51 @@ const resendRegistrationOtp = async (req, res) => {
   }
 };
 
+const verifyAccount = async (req, res) => {
+  try {
+    const { otp, user } = req.body;
+    if (!user) {
+      return sendError(res, "User not found", 404);
+    }
+    if (user.isVerified) {
+      return sendError(
+        res,
+        "User already registered, Proceed to login or use another email",
+        400
+      );
+    }
+    if (user.otp !== otp) {
+      return sendError(res, "Invalid OTP, not matched", 400);
+    }
+
+    user.isVerified = true;
+    user.otp = null;
+    await user.save();
+
+    const token = generateToken(user);
+
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      secure: nodeEnvironment === "production",
+    });
+
+    const data = {
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      profilePicture: user.profilePicture,
+      isDarkMode: user.isDarkMode,
+      isVerified: user.isVerified,
+    };
+
+    console.log("Logged In as_________________________" + user.name);
+    return successResponse(res, "User logged in successfully", data);
+  } catch (error) {
+    return sendError(res, error.message, 400);
+  }
+};
+
 const login = async (req, res) => {};
 
-module.exports = { register, login, resendRegistrationOtp };
+module.exports = { register, login, resendRegistrationOtp, verifyAccount };

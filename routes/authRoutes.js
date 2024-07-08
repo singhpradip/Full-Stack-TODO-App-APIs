@@ -2,6 +2,7 @@ const express = require("express");
 const {
   register,
   resendRegistrationOtp,
+  verifyAccount,
   login,
 } = require("../controllers/authController");
 const authMiddleware = require("../middlewares/authMiddleware");
@@ -13,6 +14,13 @@ router.post(
   "/register/resendOtp",
   authMiddleware.verifyTempToken,
   resendRegistrationOtp
+);
+
+router.post(
+  "/register/verify-account",
+  authMiddleware.verifyTempToken,
+  //   validateUserData
+  verifyAccount
 );
 
 

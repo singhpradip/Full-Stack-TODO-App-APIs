@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema(
     isVerified: { type: Boolean, default: false },
     passwordVersion: { type: Number, default: 0 },
     profilePicture: { type: String, default: "" },
-    darkMode: { type: Boolean, default: false },
+    isDarkMode: { type: Boolean, default: false },
   },
   {
     timestamps: true,
