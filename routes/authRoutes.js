@@ -4,6 +4,7 @@ const {
   resendRegistrationOtp,
   verifyAccount,
   login,
+  sendUserInfo,
 } = require("../controllers/authController");
 const authMiddleware = require("../middlewares/authMiddleware");
 
@@ -23,7 +24,10 @@ router.post(
   verifyAccount
 );
 
-
 router.post("/login", login);
+
+// verify if user is logged in
+router.post("/verify-token", authMiddleware.verifyAccessToken, sendUserInfo);
+
 
 module.exports = router;
