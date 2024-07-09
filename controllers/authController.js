@@ -34,20 +34,8 @@ const sendOtp = async (email, name = null) => {
   }
 };
 
-const generateToken = (user) => {
-  return jwt.sign(
-    {
-      useId: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      profilePicture: user.profilePicture,
-      isDarkMode: user.isDarkMode,
-      isVerified: user.isVerified,
-    },
-    secretKey,
-    { expiresIn }
-  );
+const generateAccessToken = (userData) => {
+  return jwt.sign(userData, secretKey, { expiresIn });
 };
 
 const register = async (req, res) => {
@@ -149,25 +137,31 @@ const verifyAccount = async (req, res) => {
     user.otp = null;
     await user.save();
 
-    const token = generateToken(user);
-
-    res.cookie("accessToken", token, {
-      httpOnly: true,
-      secure: nodeEnvironment === "production",
-    });
-
-    const data = {
-      _id: user._id,
+    const userData = {
+      userId: user._id,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
       profilePicture: user.profilePicture,
       isDarkMode: user.isDarkMode,
       isVerified: user.isVerified,
+      passwordVersion: user.passwordVersion,
     };
 
+    const token = generateAccessToken(userData);
+
+    res.clearCookie("tempToken", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      secure: nodeEnvironment === "production",
+    });
+
     console.log("Logged In as_________________________" + user.name);
-    return successResponse(res, "User logged in successfully", data);
+    return successResponse(res, "User logged in successfully", userData);
   } catch (error) {
     return sendError(res, error.message, 400);
   }
@@ -177,7 +171,7 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    // console.log(user);
+    console.log(user);
     if (!user) {
       return sendError(res, "Invalid email or password", 402);
     }
@@ -198,21 +192,24 @@ const login = async (req, res) => {
       return sendError(res, "Invalid email or password", 401);
     }
 
-    const token = generateToken(user);
-    res.cookie("accessToken", token, {
-      httpOnly: true,
-      secure: nodeEnvironment === "production",
-    });
-
     const userData = {
-      useId: user._id,
+      userId: user._id,
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
       profilePicture: user.profilePicture,
       isDarkMode: user.isDarkMode,
       isVerified: user.isVerified,
+      passwordVersion: user.passwordVersion,
     };
+
+    const token = generateAccessToken(userData);
+
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      secure: nodeEnvironment === "production",
+    });
+
     console.log(
       "Logged In as_________________________" +
         user.firstName +
@@ -225,4 +222,25 @@ const login = async (req, res) => {
   }
 };
 
-module.exports = { register, login, resendRegistrationOtp, verifyAccount };
+const sendUserInfo = (req, res) => {
+  const { user } = req.body;
+  const userData = {
+    userId: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    profilePicture: user.profilePicture,
+    isDarkMode: user.isDarkMode,
+    isVerified: user.isVerified,
+    passwordVersion: user.passwordVersion,
+  };
+  return successResponse(res, "Token is valid", userData);
+};
+
+module.exports = {
+  register,
+  login,
+  resendRegistrationOtp,
+  verifyAccount,
+  sendUserInfo,
+};
