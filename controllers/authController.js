@@ -173,6 +173,56 @@ const verifyAccount = async (req, res) => {
   }
 };
 
-const login = async (req, res) => {};
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+    // console.log(user);
+    if (!user) {
+      return sendError(res, "Invalid email or password", 402);
+    }
+
+    if (!user.isVerified) {
+      console.log(
+        "User is not verified\nTODO: redirect user to the OTP Verification page with email payload"
+      );
+      return sendError(
+        res,
+        "Your account is not verified, Please sign up again  !",
+        403
+      );
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return sendError(res, "Invalid email or password", 401);
+    }
+
+    const token = generateToken(user);
+    res.cookie("accessToken", token, {
+      httpOnly: true,
+      secure: nodeEnvironment === "production",
+    });
+
+    const userData = {
+      useId: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      profilePicture: user.profilePicture,
+      isDarkMode: user.isDarkMode,
+      isVerified: user.isVerified,
+    };
+    console.log(
+      "Logged In as_________________________" +
+        user.firstName +
+        " " +
+        user.lastName
+    );
+    return successResponse(res, "User logged in successfully", userData);
+  } catch (error) {
+    return sendError(res, "Internal server error", 500);
+  }
+};
 
 module.exports = { register, login, resendRegistrationOtp, verifyAccount };
