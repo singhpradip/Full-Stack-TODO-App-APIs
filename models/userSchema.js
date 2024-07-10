@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema(
     otp: { type: String, maxlength: [6, "Maximum length should be 6"] },
     isVerified: { type: Boolean, default: false },
     passwordVersion: { type: Number, default: 0 },
-    profilePicture: { type: String, default: "" },
+    profilePicture: { type: String, default: null },
     isDarkMode: { type: Boolean, default: false },
   },
   {

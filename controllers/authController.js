@@ -145,7 +145,6 @@ const verifyAccount = async (req, res) => {
       profilePicture: user.profilePicture,
       isDarkMode: user.isDarkMode,
       isVerified: user.isVerified,
-      passwordVersion: user.passwordVersion,
     };
 
     const token = generateAccessToken(userData);
@@ -200,7 +199,6 @@ const login = async (req, res) => {
       profilePicture: user.profilePicture,
       isDarkMode: user.isDarkMode,
       isVerified: user.isVerified,
-      passwordVersion: user.passwordVersion,
     };
 
     const token = generateAccessToken(userData);
@@ -232,7 +230,6 @@ const sendUserInfo = (req, res) => {
     profilePicture: user.profilePicture,
     isDarkMode: user.isDarkMode,
     isVerified: user.isVerified,
-    passwordVersion: user.passwordVersion,
   };
   return successResponse(res, "Token is valid", userData);
 };

@@ -43,7 +43,7 @@ const verifyAccessToken = async (req, res, next) => {
     const decoded = jwt.verify(token, secretKey);
     // console.log(decoded);
     const { userId, passwordVersion } = decoded;
-    console.log(passwordVersion + " \n" + userId);
+    // console.log(passwordVersion + " \n" + userId);
 
     const user = await User.findById(userId);
     if (!user) {
