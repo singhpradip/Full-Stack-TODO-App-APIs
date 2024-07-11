@@ -145,6 +145,7 @@ const verifyAccount = async (req, res) => {
       profilePicture: user.profilePicture,
       isDarkMode: user.isDarkMode,
       isVerified: user.isVerified,
+      passwordVersion: user.passwordVersion,
     };
 
     const token = generateAccessToken(userData);
@@ -159,7 +160,12 @@ const verifyAccount = async (req, res) => {
       secure: nodeEnvironment === "production",
     });
 
-    console.log("Logged In as_________________________" + user.name);
+    console.log(
+      "Logged In as_________________________" +
+        user.firstName +
+        " " +
+        user.lastName
+    );
     return successResponse(res, "User logged in successfully", userData);
   } catch (error) {
     return sendError(res, error.message, 400);
@@ -170,15 +176,12 @@ const login = async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await User.findOne({ email });
-    console.log(user);
+    // console.log(user);
     if (!user) {
       return sendError(res, "Invalid email or password", 402);
     }
 
     if (!user.isVerified) {
-      console.log(
-        "User is not verified\nTODO: redirect user to the OTP Verification page with email payload"
-      );
       return sendError(
         res,
         "Your account is not verified, Please sign up again  !",
@@ -199,6 +202,7 @@ const login = async (req, res) => {
       profilePicture: user.profilePicture,
       isDarkMode: user.isDarkMode,
       isVerified: user.isVerified,
+      passwordVersion: user.passwordVersion,
     };
 
     const token = generateAccessToken(userData);
@@ -220,6 +224,15 @@ const login = async (req, res) => {
   }
 };
 
+const logout = (req, res) => {
+  res.clearCookie("accessToken", {
+    httpOnly: true,
+    secure: nodeEnvironment === "production",
+    sameSite: "strict",
+  });
+  return successResponse(res, "Logged out successfully");
+};
+
 const sendUserInfo = (req, res) => {
   const { user } = req.body;
   const userData = {
@@ -237,6 +250,7 @@ const sendUserInfo = (req, res) => {
 module.exports = {
   register,
   login,
+  logout,
   resendRegistrationOtp,
   verifyAccount,
   sendUserInfo,
