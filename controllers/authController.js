@@ -74,6 +74,7 @@ const register = async (req, res) => {
     res.cookie("tempToken", tempToken, {
       httpOnly: true,
       secure: nodeEnvironment === "production",
+      sameSite: "None",
     });
 
     return successResponse(
@@ -106,6 +107,7 @@ const resendRegistrationOtp = async (req, res) => {
     res.cookie("tempToken", tempToken, {
       httpOnly: true,
       secure: nodeEnvironment === "production",
+      sameSite: "None",
     });
 
     return successResponse(res, "OTP Resent Successfully");
@@ -151,11 +153,13 @@ const verifyAccount = async (req, res) => {
     res.clearCookie("tempToken", {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
+      sameSite: "None",
     });
 
     res.cookie("accessToken", token, {
       httpOnly: true,
       secure: nodeEnvironment === "production",
+      sameSite: "None",
     });
 
     console.log(
@@ -208,6 +212,7 @@ const login = async (req, res) => {
     res.cookie("accessToken", token, {
       httpOnly: true,
       secure: nodeEnvironment === "production",
+      sameSite: "None",
     });
 
     console.log(
@@ -226,7 +231,7 @@ const logout = (req, res) => {
   res.clearCookie("accessToken", {
     httpOnly: true,
     secure: nodeEnvironment === "production",
-    sameSite: "strict",
+    sameSite: "None",
   });
   return successResponse(res, "Logged out successfully");
 };
