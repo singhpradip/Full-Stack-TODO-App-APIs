@@ -22,7 +22,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/tasks", taskRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Todo App Backend Server is running.");
+  res.send("Todo App Backend Server is running. cors for: ", process.env.CLIENT_URL);
 });
 
 app.listen(PORT, () => {
