@@ -39,14 +39,12 @@ const generateAccessToken = (userData) => {
 };
 
 const register = async (req, res) => {
-  const { firstName, lastName, email, password, confirmPassword } = req.body;
+  const { firstName, lastName, email, password } = req.body;
 
-  if (!firstName || !lastName || !email || !password || !confirmPassword) {
+  if (!firstName || !lastName || !email || !password) {
     return sendError(res, "all fields are required", 400);
   }
-  if (password !== confirmPassword) {
-    return sendError(res, "Password do not match", 400);
-  }
+
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser && existingUser.isVerified) {
