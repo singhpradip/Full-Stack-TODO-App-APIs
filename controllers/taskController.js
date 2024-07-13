@@ -34,12 +34,15 @@ const getTasks = async (req, res) => {
 };
 
 const updateTask = async (req, res) => {
-  const { id } = req.params;
+  const { taskId } = req.params;
   const { title, description, status } = req.body;
   const userId = req.body.user._id;
 
+  console.log("updateTask", taskId);
   try {
-    const task = await Task.findOne({ _id: id, userId });
+    const task = await Task.findOne({ _id: taskId, userId });
+    console.log(task);
+
     if (!task) {
       return sendError(res, "Task not found", 404);
     }
@@ -57,16 +60,17 @@ const updateTask = async (req, res) => {
 };
 
 const deleteTask = async (req, res) => {
-  const { id } = req.params;
+  const { taskId } = req.params;
   const userId = req.body.user._id;
+  console.log("updateTask", taskId);
 
   try {
-    const task = await Task.findOne({ _id: id, userId });
+    const task = await Task.findOne({ _id: taskId, userId });
     if (!task) {
       return sendError(res, "Task not found", 404);
     }
 
-    await task.remove();
+    await Task.deleteOne({ _id: taskId, userId });
     return successResponse(res, "Tasks deleted successfully");
   } catch (error) {
     console.log({ error: error.message });
