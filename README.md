@@ -46,7 +46,7 @@ To run this project locally, follow these steps:
 #### Clone the repository:
 
 ```bash
-git clone <repository-url>
+git https://github.com/singhpradip/Full-Stack-TODO-App-APIs.git
 cd <repository-name>
 ```
 #### Install dependencies:
