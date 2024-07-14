@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userSchema");
 const { successResponse, sendError } = require("../utils/responseUtils");
+const axios = require("axios");
+
 const {
   secretKey,
   expiresIn,
@@ -9,6 +11,8 @@ const {
   nodeEnvironment,
 } = require("../config/config");
 const { sendVerificationEmail } = require("../utils/sendVerificationEmail");
+
+const IMAGE_SERVER_URL = process.env.IMAGE_SERVER_URL;
 
 const generateOTP = () => {
   const otp = Math.floor(100000 + Math.random() * 900000);
@@ -250,6 +254,35 @@ const sendUserInfo = (req, res) => {
   return successResponse(res, "Token is valid", userData);
 };
 
+const updateUserInfo = async (req, res) => {
+  const profilePicture = req.file;
+  const { user, firstName, lastName } = req.body;
+
+  try {
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (profilePicture) {
+      const response = await axios.post(`${IMAGE_SERVER_URL}/upload/800`, {
+        image: profilePicture,
+      });
+      const { imageUrl } = response.data;
+      user.profilePicture = imageUrl;
+    }
+
+    await user.save();
+
+    return successResponse(res, "Profile updated successfully", {
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      profilePicture: user.profilePicture,
+    });
+  } catch (error) {
+    console.log(error);
+    return sendError(res, "Internal server error", 500);
+  }
+};
+
 module.exports = {
   register,
   login,
@@ -257,4 +290,5 @@ module.exports = {
   resendRegistrationOtp,
   verifyAccount,
   sendUserInfo,
+  updateUserInfo,
 };
