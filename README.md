@@ -123,7 +123,7 @@ This will start the server on localhost:3000 (or the port specified in your .env
 
 The project structure is organized as follows:
 ```bash
-todo-app-backend/
+Full-Stack-TODO-App-APIs/
 │
 ├── config/
 │ ├── db.js # MongoDB connection setup
