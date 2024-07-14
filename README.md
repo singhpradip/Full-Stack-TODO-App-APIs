@@ -48,8 +48,8 @@ To run this project locally, follow these steps:
 git clone <repository-url>
 cd <repository-name>
 Install dependencies:
-
 ```bash
+
 npm install
 Set up environment variables:
 Create a .env file in the root directory and add the following variables:
