@@ -156,7 +156,7 @@ Full-Stack-TODO-App-APIs/
 ```
 
 # Contributing
-
+I welcome contributions to improve this Full-Stack-TODO-App-APIs. To contribute, please follow the following steps.
 1. Fork the repository.
 2. Create a new branch (`git checkout -b feature-branch`).
 3. Make your changes and commit them (`git commit -m 'Add new feature'`).
