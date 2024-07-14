@@ -4,13 +4,14 @@ This repository contains the backend server implementation for a Todo applicatio
 
 ## Table of Contents
 
-- [Introduction](#introduction)
-- [Features](#features)
+- [Introduction](#Introduction)
+- [Features](#Features)
 - [Technologies Used](#technologies-used)
 - [Setup Instructions](#setup-instructions)
 - [API Endpoints](#api-endpoints)
 - [Project Structure](#project-structure)
-- [License](#license)
+- [Contributing](#Contributing)
+
 
 # Introduction
 
@@ -38,33 +39,36 @@ This backend server provides the core functionality for managing user authentica
 - Other libraries and utilities for validation and error handling
 
 
-## Setup Instructions
+# Setup Instructions
 
 To run this project locally, follow these steps:
 
-### Clone the repository:
+#### Clone the repository:
 
 ```bash
 git clone <repository-url>
 cd <repository-name>
-Install dependencies:
-```bash
+```
+#### Install dependencies:
 
+```bash
 npm install
-Set up environment variables:
+```
+
+#### Set up environment variables:
 Create a .env file in the root directory and add the following variables:
 
-```bash
+```env
 PORT=5000
 IMAGE_SERVER_URL= http://localhost:4001
-# MONGO_DB_URL= 
+#MONGO_DB_URL= 
 MONGO_DB_REMOTE_URL = 
 
 NODE_ENV = 'dev'
 
 
 CLIENT_URL = http://localhost:5173
-# CLIENT_URL = https://www.thunderclient.com
+#CLIENT_URL = https://www.thunderclient.com
 
 
 # JWT keys
@@ -80,17 +84,17 @@ CLIENT_SECRET =
 REDIRECT_URL= https://developers.google.com/oauthplayground
 REFRESH_TOKEN = 
 accessToken = 
-
+```
 
 Run the server:
 ```bash
-npm start
-
+npm run dev
+```
 This will start the server on localhost:3000 (or the port specified in your .env file).
 
 
 
-## API Endpoints
+# API Endpoints
 
 ### Auth Routes
 
@@ -111,26 +115,26 @@ This will start the server on localhost:3000 (or the port specified in your .env
 
 ### Notes:
 
-- Make sure to replace `your-client-port`, `your-mongodb-uri`, and `your-secret-key-for-jwt` with your actual values.
+- Make sure to replace `CLIENT_URL`, `your-mongodb-uri`, and `your-secret-key-for-jwt` with your actual values.
 - Ensure MongoDB is running and accessible.
 
 
-## Project Structure
+# Project Structure
 
 The project structure is organized as follows:
-
+```bash
 todo-app-backend/
 │
 ├── config/
 │ ├── db.js # MongoDB connection setup
-│ └── config.js # Configuration variables (e.g., secretKey, expiresIn)
+│ └── config.js # Configuration variables
 │
 ├── controllers/
 │ ├── authController.js # Logic for user authentication
 │ └── taskController.js # Logic for task management
 │
 ├── middlewares/
-│ └── authMiddleware.js # Middleware functions (e.g., authentication)
+│ └── authMiddleware.js # Middleware functions 
 │
 ├── models/
 │ ├── taskSchema.js # MongoDB schema for tasks
@@ -142,16 +146,20 @@ todo-app-backend/
 │
 ├── utils/
 │ ├── responseUtils.js # Utility functions for HTTP responses
-│ └── sendVerificationEmail.js # Utility for sending verification emails
+│ └── sendVerificationEmail.js # Utility for sending emails
 │
 ├── .env # Environment variables
 ├── .gitignore
 ├── package.json
 ├── server.js # Entry point of the server
 └── README.md # This file
+```
 
+# Contributing
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+1. Fork the repository.
+2. Create a new branch (`git checkout -b feature-branch`).
+3. Make your changes and commit them (`git commit -m 'Add new feature'`).
+4. Push to the branch (`git push origin feature-branch`).
+5. Create a new Pull Request.
 
