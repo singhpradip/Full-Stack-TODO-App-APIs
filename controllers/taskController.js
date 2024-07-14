@@ -1,10 +1,14 @@
 const Task = require("../models/taskSchema");
 const { successResponse, sendError } = require("../utils/responseUtils");
-//validate data using JOI
+//validate data using JOI -- for now i mannually validated,,
 
 const createTask = async (req, res) => {
   const { title, description, status } = req.body;
   const userId = req.body.user._id;
+
+  if (!title || !status || !userId) {
+    return sendError(res, "Invalid Inputs", 404);
+  }
 
   try {
     const newTask = new Task({
@@ -23,6 +27,9 @@ const createTask = async (req, res) => {
 
 const getTasks = async (req, res) => {
   const userId = req.body.user._id;
+   if (!userId) {
+     return sendError(res, "Invalid Inputs", 404);
+   }
 
   try {
     const tasks = await Task.find({ userId });
@@ -38,10 +45,14 @@ const updateTask = async (req, res) => {
   const { title, description, status } = req.body;
   const userId = req.body.user._id;
 
-  console.log("updateTask", taskId);
+  if (!taskId || !userId || !title || !status) {
+    return sendError(res, "Invalid Inputs", 404);
+  }
+
+  // console.log("updateTask", taskId);
   try {
     const task = await Task.findOne({ _id: taskId, userId });
-    console.log(task);
+    // console.log(task);
 
     if (!task) {
       return sendError(res, "Task not found", 404);
@@ -62,8 +73,10 @@ const updateTask = async (req, res) => {
 const deleteTask = async (req, res) => {
   const { taskId } = req.params;
   const userId = req.body.user._id;
-  console.log("updateTask", taskId);
-
+  // console.log("updateTask", taskId);
+  if (!taskId || !userId) {
+    return sendError(res, "Invalid Inputs", 404);
+  }
   try {
     const task = await Task.findOne({ _id: taskId, userId });
     if (!task) {
