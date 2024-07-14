@@ -6,7 +6,7 @@ const createTask = async (req, res) => {
   const { title, description, status } = req.body;
   const userId = req.body.user._id;
 
-  if (!title || !status || !userId) {
+  if (!title || !userId) {
     return sendError(res, "Invalid Inputs", 404);
   }
 
@@ -27,9 +27,9 @@ const createTask = async (req, res) => {
 
 const getTasks = async (req, res) => {
   const userId = req.body.user._id;
-   if (!userId) {
-     return sendError(res, "Invalid Inputs", 404);
-   }
+  if (!userId) {
+    return sendError(res, "Invalid Inputs", 404);
+  }
 
   try {
     const tasks = await Task.find({ userId });
@@ -45,7 +45,7 @@ const updateTask = async (req, res) => {
   const { title, description, status } = req.body;
   const userId = req.body.user._id;
 
-  if (!taskId || !userId || !title || !status) {
+  if (!taskId || !userId) {
     return sendError(res, "Invalid Inputs", 404);
   }
 

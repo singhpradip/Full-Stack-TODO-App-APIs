@@ -6,6 +6,7 @@ const {
   login,
   logout,
   sendUserInfo,
+  updateUserInfo,
 } = require("../controllers/authController");
 const authMiddleware = require("../middlewares/authMiddleware");
 
@@ -30,6 +31,7 @@ router.post("/logout", logout);
 
 // verify if user is logged in
 router.post("/verify-token", authMiddleware.verifyAccessToken, sendUserInfo);
+router.put("/update-user", authMiddleware.verifyAccessToken, updateUserInfo);
 
 
 module.exports = router;
