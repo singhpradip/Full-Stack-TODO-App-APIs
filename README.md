@@ -47,7 +47,7 @@ To run this project locally, follow these steps:
 
 ```bash
 git https://github.com/singhpradip/Full-Stack-TODO-App-APIs.git
-cd <repository-name>
+cd Full-Stack-TODO-App-APIs
 ```
 #### Install dependencies:
 
