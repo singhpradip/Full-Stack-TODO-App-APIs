@@ -12,6 +12,8 @@ This repository contains the backend server implementation for a Todo applicatio
 - [Project Structure](#project-structure)
 - [Contributing](#Contributing)
 
+# View Live DEMO: 
+[Link text](https://mytodo-pradip.vercel.app)
 
 # Introduction
 
